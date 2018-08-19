@@ -1,6 +1,7 @@
 #!/usr/local/bin/python3
-from textdist.finder import find_shortest_distance
+from textdist.finder import find_shortest_distance_iterator, iterator_from_file
 from argparse import ArgumentParser
+import sys
 
 
 def parse_args():
@@ -18,5 +19,10 @@ if __name__ == "__main__":
     args = parse_args()
 
     with open(args.filename) as fd:
-        distance = find_shortest_distance(fd.read(), args.word1, args.word2)
-        print(f"Shortest distance between {args.word1} and {args.word2}: {distance}")
+        iter = iterator_from_file(fd)
+        try:
+            distance = find_shortest_distance_iterator(iter, args.word1, args.word2)
+            print(f"Shortest distance between {args.word1} and {args.word2}: {distance}")
+        except UnicodeDecodeError as exc:
+            print("Binary or non-utf8 file.", file=sys.stderr)
+            exit(1)

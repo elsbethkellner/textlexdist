@@ -4,42 +4,42 @@ from textdist.lexer import Lexer, UsageException
 
 def test_whitespace():
     "tests that empty strings are not returned as words"
-    lex = Lexer("foo  bar")
+    lex = Lexer.from_string("foo  bar")
     lst = [w for w in lex.iterate_words()]
     assert lst == ["foo", "bar"]
 
 
 def test_newlines():
     "tests that newlines are treated as whitesapce"
-    lex = Lexer("foo\nbar")
+    lex = Lexer.from_string("foo\nbar")
     lst = [w for w in lex.iterate_words()]
     assert lst == ["foo", "bar"]
 
 
 def test_empty():
     "tests null input"
-    lex = Lexer("")
+    lex = Lexer.from_string("")
     assert [] == list(lex.iterate_words())
 
 
 def test_capitalization():
     "tests that capitalization doesn't matter"
-    lex = Lexer("All")
+    lex = Lexer.from_string("All")
     assert "all" == next(lex.iterate_words())
 
 
 def test_compound_word():
-    lex = Lexer("mother-in-law")
+    lex = Lexer.from_string("mother-in-law")
     assert "mother-in-law" == next(lex.iterate_words())
 
 
 def test_punctuation_removal():
     "tests removal of punctuation which is not part of the word"
-    lex = Lexer("no!")
+    lex = Lexer.from_string("no!")
     assert "no" == next(lex.iterate_words())
-    lex = Lexer("yes.")
+    lex = Lexer.from_string("yes.")
     assert "yes" == next(lex.iterate_words())
-    lex = Lexer("yes, please")
+    lex = Lexer.from_string("yes, please")
     assert ["yes", "please"] == list(lex.iterate_words())
     lex = Lexer.from_string("Frankfurt (oder)")
     assert ["frankfurt", "oder"] == list(lex.iterate_words())
@@ -47,14 +47,14 @@ def test_punctuation_removal():
 
 def test_missing_whitespace():
     "tests badly punctuated sentences: missing whitespace after the period"
-    lex = Lexer("my head's stuck in the cupboard!oh no!")
+    lex = Lexer.from_string("my head's stuck in the cupboard!oh no!")
     expected = ["my", "head's", "stuck", "in", "the", "cupboard", "oh", "no"]
-    assert expected == (lex.iterate_words())
+    assert expected == list(lex.iterate_words())
 
 
 def test_quotation_mark_removal():
     "tests that quoted words should be unquoted"
-    lex = Lexer('"title"')
+    lex = Lexer.from_string('"title"')
     assert "title" == next(lex.iterate_words())
 
 
@@ -63,9 +63,9 @@ def test_trailing_apostrophe():
     Note this is not specified by the problem spec,
     but it matches singular possessive behavior (both "parent's" and "parents'") are words
     and the rules of English ("nothin'") is slang and will appear"""
-    lex = Lexer("parents'")
+    lex = Lexer.from_string("parents'")
     assert "parents'" == next(lex.iterate_words())
-    lex = Lexer("nothin'")
+    lex = Lexer.from_string("nothin'")
     assert "nothin'" == next(lex.iterate_words())
 
 
@@ -73,7 +73,7 @@ def test_sentences():
     "tests two sentences, the use case from problem description"
     sentence = ("We do value and reward motivation in our development team.  "
                 "Development is a key skill for a DevOp")
-    lex = Lexer(sentence)
+    lex = Lexer.from_string(sentence)
     actual = [w for w in lex.iterate_words()]
     expected = ["we", "do", "value", "and", "reward", "motivation",
                 "in", "our", "development", "team",

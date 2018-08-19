@@ -1,6 +1,6 @@
 import pytest
 
-from textdist.finder import find_shortest_distance
+from textdist.finder import find_shortest_distance, find_shortest_distance_iterator
 from textdist.lexer import UsageException
 
 
@@ -55,3 +55,17 @@ def test_raises_on_empty_search():
         find_shortest_distance_iterator(
             ["text body to search"],
             "foo", "")
+
+
+def test_search_for_same_word(example_iter):
+    """tests when we search for the same word twice,
+    we should find distance between 2 different instances of the word"""
+    assert find_shortest_distance_iterator(
+        example_iter, "development", "development") == 1
+
+
+def test_search_for_same_word_no_match(example_iter):
+    """tests when we search for the same word twice,
+    if the word appears once, this is no match"""
+    assert find_shortest_distance_iterator(
+        example_iter, "motivation", "motivation") is None
