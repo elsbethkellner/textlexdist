@@ -1,6 +1,7 @@
 import pytest
 
 from textdist.finder import find_shortest_distance
+from textdist.lexer import UsageException
 
 
 @pytest.fixture
@@ -40,3 +41,17 @@ def test_reverse_order(example_sentence):
     """tests if the target words are given in the reverse order
     (compared to how they appear in the test)"""
     assert find_shortest_distance(example_sentence, "development", "motivation") == 2
+
+
+def test_raises_on_null_input():
+    "tests bad search body will raise"
+    with pytest.raises(UsageException):
+        find_shortest_distance_iterator(None, "foo", "bar")
+
+
+def test_raises_on_empty_search():
+    "tests empty search term will raise"
+    with pytest.raises(UsageException):
+        find_shortest_distance_iterator(
+            ["text body to search"],
+            "foo", "")
