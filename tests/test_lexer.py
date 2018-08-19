@@ -1,4 +1,5 @@
-from textdist.lexer import Lexer
+import pytest
+from textdist.lexer import Lexer, UsageException
 
 
 def test_whitespace():
@@ -40,6 +41,15 @@ def test_punctuation_removal():
     assert "yes" == next(lex.iterate_words())
     lex = Lexer("yes, please")
     assert ["yes", "please"] == list(lex.iterate_words())
+    lex = Lexer.from_string("Frankfurt (oder)")
+    assert ["frankfurt", "oder"] == list(lex.iterate_words())
+
+
+def test_missing_whitespace():
+    "tests badly punctuated sentences: missing whitespace after the period"
+    lex = Lexer("my head's stuck in the cupboard!oh no!")
+    expected = ["my", "head's", "stuck", "in", "the", "cupboard", "oh", "no"]
+    assert expected == (lex.iterate_words())
 
 
 def test_quotation_mark_removal():
@@ -69,3 +79,9 @@ def test_sentences():
                 "in", "our", "development", "team",
                 "development", "is", "a", "key", "skill", "for", "a", "devop"]
     assert actual == expected
+
+
+def test_raises():
+    "lexer should raise on null input"
+    with pytest.raises(UsageException):
+        Lexer(None)
