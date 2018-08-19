@@ -1,0 +1,8 @@
+
+# python and libraries
+__pycache__/
+.pytest_cache
+
+# emacs
+*~
+#*#
